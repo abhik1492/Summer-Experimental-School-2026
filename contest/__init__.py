@@ -8,26 +8,54 @@ Implementation of contest games with selectable contest success function
 
 class C(BaseConstants):
     NAME_IN_URL = 'contest'
-    PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 1
+    PLAYERS_PER_GROUP = 2
+    NUM_ROUNDS = 3
+    ENDOWMENT = Currency(10)
+    COST_PER_TICKET = Currency(0.50)
+    PRIZE = Currency(8)
 
 
 class Subsession(BaseSubsession):
-    pass
-
+    is_paid = models.BooleanField()
+    # Can take on the values True or False
+    def setup_round(self):
+        self.is_paid = True
+        for group in self.get_groups():
+            group.setup_round()
 
 class Group(BaseGroup):
-    pass
+    prize=models.CurrencyField()
+
+    def setup_round(self):
+        self.prize = C.PRIZE
+        self.csf = ...
+        for player in self.get_players():
+            player.setup_round()
 
 
 class Player(BasePlayer):
-    pass
+    endowment = models.CurrencyField()
+    cost_per_ticket = models.CurrencyField()
+    tickets_purchased = models.IntegerField()
 
+    def setup_round(self):
+        self.endowment = C.ENDOWMENT
+        self.cost_per_ticket = C.COST_PER_TICKET
+    # Setup round is one operation we are going to do on one player by setting the endowment to the constant endowment
+
+
+def creating_session(subsession):
+    subsession.setup_round()
+# This created sessions across all rounds
 
 # PAGES
 class SetupRound(WaitPage):
-    pass
+    wait_for_all_groups = True
 
+    @staticmethod
+    def after_all_players_arrive(subsession):
+        subsession.setup_round()
+# All functions on pages start with @staticmethod because pages are supposed to be very easy to follow and basic
 class Intro(Page):
     pass
 

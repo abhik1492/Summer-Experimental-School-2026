@@ -42,6 +42,10 @@ class Player(BasePlayer):
         self.cost_per_ticket = C.COST_PER_TICKET
     # Setup round is one operation we are going to do on one player by setting the endowment to the constant endowment
 
+    @property
+    def coplayer(self):
+      return self.group.get_player_by_id(3 - self.id_in_group)
+
 
 def creating_session(subsession):
     subsession.setup_round()
@@ -66,7 +70,11 @@ class WaitForDecisions(WaitPage):
     pass
 
 class Outcome(Page):
-    pass
+    @staticmethod
+    def vars_for_template(player):
+        return {
+            "other_purchased": player.coplayer.tickets_purchased,
+        }
 
 class EndBlock(Page):
     pass

@@ -46,6 +46,13 @@ class Player(BasePlayer):
     response_5 = models.IntegerField()
     is_correct = models.BooleanField()
 
+    def check_response(self):
+        self.is_correct = (
+        self.response_1 == self.subsession.lookup_dict[self.subsession.word(0)] and
+        self.response_2 == self.subsession.lookup_dict[self.subsession.word(1)]
+        )
+        if self.is_correct:
+            self.payoff = self.subsession.payment_per_correct
 
 # PAGES
 class Intro(Page):
@@ -63,7 +70,7 @@ class Decision(Page):
 class Results(Page):
     @staticmethod
     def is_displayed(player):
-        return player_round_number == C.NUM_ROUNDS
+        return player.round_number == C.NUM_ROUNDS
 
 
 page_sequence = [

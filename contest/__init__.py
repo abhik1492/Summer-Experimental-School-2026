@@ -1,3 +1,5 @@
+import random
+
 from otree.api import *
 
 
@@ -51,12 +53,27 @@ class Group(BaseGroup):
             else:
                 player.prize_won = 0.5
 
+    def determine_outcome_lottery(self):
+       try:
+            winner = random.choices(self.get_players(),
+                                weights=[p.tickets_purchased for p in self.get_players()],
+                                k=1)[0]
+       except ValueError:
+        for player in self.get_players():
+            if player == winner:
+                player.prize_won = 1
+            else:
+                player.prize_won = 0
+
+
 
     def determine_outcome(self):
         if self.csf == "share":
             self.determine_outcome_share()
         elif self.csf == "allpay":
             self.determine_outcome_allpay()
+        elif self.csf == "lottery":
+            self.determine_outcome_lottery()
         for player in self.get_players():
             player.earnings = (
                     player.endowment -
@@ -75,7 +92,7 @@ class Player(BasePlayer):
     earnings = models.CurrencyField()
 
     def setup_round(self):
-        self.endowment = self.session.config["contest_endowment"]
+        self.endowment = self.session.config.get("contest_endowment", C.ENDOWMENT)
         self.cost_per_ticket = C.COST_PER_TICKET
     # Setup round is one operation we are going to do on one player by setting the endowment to the constant endowment
 
@@ -86,6 +103,9 @@ class Player(BasePlayer):
     @property
     def max_tickets_affordable(self):
         return int(self.endowment / self.cost_per_ticket)
+
+    def in_paid_rounds(self):
+        return [rd for rd in self.in_all_rounds() if rd.subsession.is_paid]
 
 
 def creating_session(subsession):
@@ -136,7 +156,9 @@ class Outcome(Page):
         }
 
 class EndBlock(Page):
-    pass
+    @staticmethod
+    def is_diplayed(player):
+        return player.round_number == C.NUM_ROUNDS
 
 class Results(Page):
     pass

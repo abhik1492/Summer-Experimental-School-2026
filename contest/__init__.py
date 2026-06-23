@@ -12,18 +12,26 @@ class C(BaseConstants):
     NAME_IN_URL = 'contest'
     PLAYERS_PER_GROUP = 2
     NUM_ROUNDS = 3
+    NUM_PAID_ROUNDS = 1
     ENDOWMENT = Currency(10)
     COST_PER_TICKET = Currency(0.50)
     PRIZE = Currency(8)
 
 
 class Subsession(BaseSubsession):
-    is_paid = models.BooleanField()
+    is_paid = models.BooleanField(initial=False)
     # Can take on the values True or False
+
     def setup_round(self):
-        self.is_paid = self.round_number % 2 == 1
+        if self.round_number == 1:
+            self.setup_paid_rounds()
         for group in self.get_groups():
             group.setup_round()
+
+    def setup_paid_rounds(self):
+        for rd in random.sample(self.in_rounds(1, C.NUM_ROUNDS),
+                                k=C.NUM_PAID_ROUNDS):
+            rd.is_paid = True
 
 class Group(BaseGroup):
     prize=models.CurrencyField()

@@ -17,11 +17,23 @@ SESSION_CONFIGS = [
     ),
 
    dict(
-        name="contest_testing",
+        name="contest_share_testing",
         app_sequence=[
             "contest"
         ],
         num_demo_participants=2,
+        csf = "share",
+        contest_endowment = 10,
+    ),
+
+    dict(
+        name="contest_allpay_testing",
+        app_sequence=[
+            "contest"
+        ],
+        num_demo_participants=2,
+        csf = "allpay",
+        contest_endowment = 10,
     ),
 ]
 

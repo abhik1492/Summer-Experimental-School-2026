@@ -75,7 +75,7 @@ class Player(BasePlayer):
     earnings = models.CurrencyField()
 
     def setup_round(self):
-        self.endowment = C.ENDOWMENT
+        self.endowment = self.session.config["contest_endowment"]
         self.cost_per_ticket = C.COST_PER_TICKET
     # Setup round is one operation we are going to do on one player by setting the endowment to the constant endowment
 

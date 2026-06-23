@@ -28,6 +28,9 @@ class Subsession(BaseSubsession):
         for group in self.get_groups():
             group.setup_round()
 
+    def setup_round(self):
+        self.group_randomly()
+
     def setup_paid_rounds(self):
         for rd in random.sample(self.in_rounds(1, C.NUM_ROUNDS),
                                 k=C.NUM_PAID_ROUNDS):

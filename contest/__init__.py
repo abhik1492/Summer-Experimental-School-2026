@@ -28,7 +28,6 @@ class Group(BaseGroup):
 
     def setup_round(self):
         self.prize = C.PRIZE
-        self.csf = ...
         for player in self.get_players():
             player.setup_round()
 
@@ -60,7 +59,8 @@ class Intro(Page):
     pass
 
 class Decision(Page):
-    pass
+    form_model = "player"
+    form_fields = ["tickets_purchased"]
 
 class WaitForDecisions(WaitPage):
     pass

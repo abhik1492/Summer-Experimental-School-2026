@@ -45,6 +45,14 @@ dict(
         csf = "lottery",
         contest_endowment = 10,
     ),
+
+dict(
+        name="encryption",
+        app_sequence=[
+            "encryption"
+        ],
+        num_demo_participants=3,
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
